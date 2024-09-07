@@ -8,6 +8,8 @@ using System.Threading.Tasks;
 using UniversityManagementSystem.API.Models;
 using UniversityManagementSystem.BLL.ViewModel.Request;
 using UniversityManagementSystem.DLL.DbContext;
+using UniversityManagementSystem.DLL.Repository;
+using UniversityManagementSystem.DLL.uow;
 
 namespace UniversityManagementSystem.BLL.Service
 {
@@ -22,29 +24,29 @@ namespace UniversityManagementSystem.BLL.Service
     }
     public class ProductService:IProductService
     {
-        private readonly ApplicationDbContext _productRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public ProductService(ApplicationDbContext context) 
+        public ProductService(IUnitOfWork unitOfWork) 
         {
-            _productRepository = context;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<List<Product>> GetAllData()
         {
-            return await _productRepository.Products.AsQueryable().ToListAsync();
+            return await _unitOfWork.ProductRepository.FindAll().ToListAsync();
         }
 
         public async Task<Product> GetProductById(int id)
         {
-            return await _productRepository.Products.FirstOrDefaultAsync(x => x.Id == id); 
+            return await _unitOfWork.ProductRepository.FindByCondition(x => x.Id == id).FirstOrDefaultAsync(); 
         }
 
 
         public async Task<Product> AddProduct(Product product)
         {
-            _productRepository.Products.Add(product);
+            _unitOfWork.ProductRepository.Create(product);
 
-            if (await _productRepository.SaveChangesAsync() > 0)
+            if (await _unitOfWork.SaveChangesAsync())
             {
                 return product;
             }
@@ -69,9 +71,9 @@ namespace UniversityManagementSystem.BLL.Service
                 product.Description = request.Description;
             }
 
-            _productRepository.Products.Update(product);
+            _unitOfWork.ProductRepository.Update(product);
 
-            if (await _productRepository.SaveChangesAsync() > 0)
+            if (await _unitOfWork.SaveChangesAsync())
             {
                 return product;
             }
@@ -86,9 +88,9 @@ namespace UniversityManagementSystem.BLL.Service
                 throw new Exception("Product Not Found");
             }
 
-            _productRepository.Products.Remove(product);
+            _unitOfWork.ProductRepository.Delete(product);
 
-            if(await _productRepository.SaveChangesAsync() > 0)
+            if(await _unitOfWork.SaveChangesAsync())
             {  return product; }
             throw new Exception("something went wrong");
 

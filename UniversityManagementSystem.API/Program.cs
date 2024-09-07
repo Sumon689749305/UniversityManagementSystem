@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using UniversityManagementSystem.API.StartupExtension;
 using UniversityManagementSystem.BLL.Service;
 //using UniversityManagementSystem.BLL.Service;
+using UniversityManagementSystem.DLL;
+using UniversityManagementSystem.BLL;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,8 +16,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddDatabaseExtentionHelper(builder.Configuration);//database configaration
-builder.Services.AddScoped<ICategoryService, CategoryService>();
-builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddBLLDependency();//all BLL dependency added this method
+builder.Services.AddDLLDependency();//all DLL dependency added this method
 
 var app = builder.Build();
 

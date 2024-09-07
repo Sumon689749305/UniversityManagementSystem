@@ -9,6 +9,8 @@ using UniversityManagementSystem.DLL.DbContext;
 
 using UniversityManagementSystem.API.Models;
 using UniversityManagementSystem.BLL.ViewModel.Request;
+using UniversityManagementSystem.DLL.Repository;
+using UniversityManagementSystem.DLL.uow;
 
 
 
@@ -21,35 +23,33 @@ namespace UniversityManagementSystem.BLL.Service
         Task<Category> AddCategory(Category request);
         Task<Category> UpdateCategory(int id, CategoryInsertViewModel request);
         Task<Category> DeleteCategory(int id);
-        //Task<int> AddNumber(int id);
-        //Task<int> GetNumber();
+
     }
 
     public class CategoryService : ICategoryService
     {
-        private readonly ApplicationDbContext _context;
-        // private int _myNUmber = 1;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public CategoryService(ApplicationDbContext context)
+        public CategoryService(IUnitOfWork unitOfWork)
         {
-            _context = context;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<List<Category>> GetAll()
         {
-            return await _context.Categories.AsQueryable().ToListAsync();
+            return await _unitOfWork.CategoryRepository.FindAll().ToListAsync();
         }
 
         public async Task<Category> GetAData(int id)
         {
-            return await _context.Categories.FirstOrDefaultAsync(x => x.Id == id);
+            return await _unitOfWork.CategoryRepository.FindByCondition(x => x.Id == id).FirstOrDefaultAsync();
         }
 
         public async Task<Category> AddCategory(Category category)
         {
-            _context.Categories.Add(category);
+            _unitOfWork.CategoryRepository.Create(category);
 
-            if (await _context.SaveChangesAsync() > 0)
+            if (await _unitOfWork.SaveChangesAsync())
             {
                 return category;
             }
@@ -76,9 +76,9 @@ namespace UniversityManagementSystem.BLL.Service
                 category.ShortName = request.ShortName;
             }
 
-            _context.Categories.Update(category);
+            _unitOfWork.CategoryRepository.Update(category);
 
-            if (await _context.SaveChangesAsync() > 0)
+            if (await _unitOfWork.SaveChangesAsync())
             {
                 return category;
             }
@@ -96,25 +96,14 @@ namespace UniversityManagementSystem.BLL.Service
                 throw new Exception("category not found");
             }
 
-            _context.Categories.Remove(category);
+            _unitOfWork.CategoryRepository.Delete(category);
 
-            if (await _context.SaveChangesAsync() > 0)
+            if (await _unitOfWork.SaveChangesAsync())
             {
                 return category;
             }
 
             throw new Exception("something went wrong");
         }
-
-        //public async Task<int> AddNumber(int id)
-        //{
-        //    _myNUmber = _myNUmber + id;
-        //    return _myNUmber;
-        //}
-
-        //public async Task<int> GetNumber()
-        //{
-        //    return _myNUmber;
-        //}
     }
 }
