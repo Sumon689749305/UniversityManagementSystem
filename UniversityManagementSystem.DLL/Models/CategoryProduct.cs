@@ -1,5 +1,8 @@
-﻿namespace UniversityManagementSystem.API.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace UniversityManagementSystem.API.Models
 {
+    [Table("CategoryProduct")]
     public class CategoryProduct
     { 
        public int ProductId {  get; set; }

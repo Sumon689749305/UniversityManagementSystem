@@ -12,7 +12,7 @@ namespace UniversityManagementSystem.DLL.uow
     {
         IProductRepository ProductRepository {  get; }
         ICategoryRepository CategoryRepository { get; }
-
+        ICategoryProductRepository CategoryProductRepository { get; }
         Task<bool> SaveChangesAsync();
     }
     public class UnitOfWork:IUnitOfWork
@@ -25,8 +25,12 @@ namespace UniversityManagementSystem.DLL.uow
         }
         private IProductRepository _productRepository;
         private ICategoryRepository _categoryRepository;
+        private ICategoryProductRepository _categoryProductRepository;
         public IProductRepository ProductRepository => _productRepository ??= new ProductRepository(_context);
         public ICategoryRepository CategoryRepository => _categoryRepository ??= new CategoryRepository(_context);
+
+        public ICategoryProductRepository CategoryProductRepository => _categoryProductRepository ??= new CategoryProductRepository(_context);
+
 
         public async Task<bool> SaveChangesAsync()
         {

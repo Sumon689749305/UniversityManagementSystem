@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using UniversityManagementSystem.API.Models;
+using UniversityManagementSystem.DLL.Configs;
 
 namespace UniversityManagementSystem.DLL.DbContext
 {
@@ -14,19 +15,9 @@ namespace UniversityManagementSystem.DLL.DbContext
         {
             base.OnModelCreating(modelBuilder);
 
-            //Configure many-to-many relationship
-            modelBuilder.Entity<CategoryProduct>()
-                .HasKey(pc => new {pc.ProductId,pc.CategoryId});
-
-            modelBuilder.Entity<CategoryProduct>()
-                .HasOne(pc => pc.Product)
-                .WithMany(p => p.CategoryProducts)
-                .HasForeignKey(pc => pc.ProductId);
-
-            modelBuilder.Entity<CategoryProduct>()
-                .HasOne(pc => pc.Category)
-                .WithMany(p => p.CategoryProducts)
-                .HasForeignKey(pc=> pc.CategoryId);
+            modelBuilder.ApplyConfiguration(new CategoryConfiguration());
+            modelBuilder.ApplyConfiguration(new ProductConfiguration());
+            modelBuilder.ApplyConfiguration(new CategoryProductConfigaration());
 
         }
         public DbSet<Category> Categories { get; set; }

@@ -11,12 +11,12 @@ namespace UniversityManagementSystem.API.Controllers
     public class CategoryController : APIBaseController
     {
         private readonly ICategoryService _categoryService;
-       
+        private readonly ISeedService _seedService;
 
-        public CategoryController(ICategoryService categoryService)
+        public CategoryController(ICategoryService categoryService,ISeedService seedService)
         {
             _categoryService = categoryService;
-            
+            _seedService = seedService;
         }
 
         [HttpGet]
@@ -54,6 +54,14 @@ namespace UniversityManagementSystem.API.Controllers
         public async Task<IActionResult> Delete(int id)
         {
             return Ok(await _categoryService.DeleteCategory(id));
+        }
+
+
+        [HttpGet("Test-seed-data")]
+        public async Task<IActionResult> TestSeedData()
+        {
+            await _seedService.GenerateSeedAsync();
+            return Ok("Seed data");
         }
     }
 }

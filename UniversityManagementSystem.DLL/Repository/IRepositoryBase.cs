@@ -14,7 +14,7 @@ namespace UniversityManagementSystem.DLL.Repository
         IQueryable<T> FindAll();
         IQueryable<T> FindByCondition(Expression<Func<T, bool>> expression);
         Task Create(T model);
-        void CreateRange(List<T> models);
+        Task CreateRange(List<T> models);
         void Update(T model);
         void UpdateRange(List<T> models);
         void Delete(T model);
@@ -43,11 +43,6 @@ namespace UniversityManagementSystem.DLL.Repository
         public async Task Create(T model)
         {
             await _context.Set<T>().AddAsync(model);
-        }
-
-        void IRepositoryBase<T>.CreateRange(List<T> models)
-        {
-            throw new NotImplementedException();
         }
 
         public async Task CreateRange(List<T> models)
