@@ -2,7 +2,7 @@
 
 namespace UniversityManagementSystem.API.Models
 {
-    [Table("CategoryProduct")]
+    [Table("CategoryProducts")]
     public class CategoryProduct
     { 
        public int ProductId {  get; set; }
